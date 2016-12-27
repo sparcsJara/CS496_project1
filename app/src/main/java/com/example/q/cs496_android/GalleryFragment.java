@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 
 /**
@@ -50,7 +51,28 @@ public class GalleryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false);
+//        return inflater.inflate(R.layout.fragment_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+
+        GridView gridView = (GridView) view.findViewById(R.id.grid1);
+        ImageAdapter imageAdapter = new ImageAdapter();
+
+        gridView.setAdapter(imageAdapter);
+        for(int i=0 ; i<10 ; i++) {
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img01), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img02), "something");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img03), "interesting");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img04), "words");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img05), "will");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img06), "go");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img07), "over");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img08), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img09), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img10), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img11), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.img02), "testing");
+        }
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
