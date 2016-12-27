@@ -4,9 +4,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 
 /**
@@ -64,7 +74,33 @@ public class OurFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_our, container, false);
+        // Dialog
+
+//        return inflater.inflate(R.layout.fragment_our, container, false);
+        View view = inflater.inflate(R.layout.fragment_our, container, false);
+        new Thread() {
+            public void run() {
+                try {
+                    URL url = new URL("http://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8");
+
+                    URLConnection cnx = url.openConnection();
+                    cnx.setRequestProperty("User-Agent", "Mozilla");
+                    InputStream is = cnx.getInputStream();
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+                    String line = null;
+
+                    while((line = br.readLine()) != null) {
+                        Log.d("hi", line);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -90,6 +126,12 @@ public class OurFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    public void refreshPicture(View view) {
+        // Load
+        //setImageDrawable ~~~~
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
