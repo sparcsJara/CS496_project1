@@ -59,18 +59,15 @@ public class GalleryFragment extends Fragment {
 
         gridView.setAdapter(imageAdapter);
         for(int i=0 ; i<10 ; i++) {
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img01), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img02), "something");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img03), "interesting");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img04), "words");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img05), "will");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img06), "go");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img07), "over");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img08), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img09), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img10), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img11), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.img02), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample0), "testing");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample1), "something");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample2), "interesting");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample3), "words");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample4), "will");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample5), "go");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample6), "over");
+            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample7), "testing");
+
         }
         return view;
     }

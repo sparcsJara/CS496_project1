@@ -2,7 +2,6 @@ package com.example.q.cs496_android;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,17 +91,6 @@ public class CS496 extends AppCompatActivity {
                 }
 
 
-            }
-        });
-
-        Button gallaryBtn = (Button) findViewById(R.id.btn3);
-        gallaryBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(getApplicationContext(), "갤러리로 들어갑니다.",Toast.LENGTH_LONG);
-                Intent into_gallery = new Intent(getApplicationContext(), gallery.class);
-                startActivity(into_gallery);
-                return false;
             }
         });
     }
