@@ -1,12 +1,33 @@
 package com.example.q.cs496_android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -64,7 +85,30 @@ public class OurFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_our, container, false);
+        // Dialog
+
+//        return inflater.inflate(R.layout.fragment_our, container, false);
+        View view = inflater.inflate(R.layout.fragment_our, container, false);
+
+        final WebView webView = new WebView(view.getContext());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new MyJavascriptInterface(view.getContext()), "HtmlViewer");
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                webView.loadUrl("javascript:HtmlViewer.showHTML" +
+                        "('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+            }
+        });
+
+        String newUA = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
+        webView.getSettings().setUserAgentString(newUA);
+
+        // Executed at startup & clicked
+        webView.loadUrl("https://search.naver.com/search.naver?sm=tab_hty.top&where=image&oquery=%EB%AA%A8%EB%AA%A8&ie=utf8&query=%EB%AA%A8%EB%AA%A8");
+        //webView.loadUrl(generate_query(i));
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -91,6 +135,12 @@ public class OurFragment extends Fragment {
         mListener = null;
     }
 
+    public void refreshPicture(View view) {
+        // Load
+        //setImageDrawable ~~~~
+    }
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -106,3 +156,28 @@ public class OurFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
+class MyJavascriptInterface {
+    private Context ctx;
+    MyJavascriptInterface(Context ctx) {
+        this.ctx = ctx;
+    }
+    @JavascriptInterface
+    public void showHTML(String html) {
+        Log.d("Here is", Integer.toString(html.length()));
+        Document doc = Jsoup.parse(html);
+        Elements imgs = doc.select("img._img");
+
+        List<String> sources = new ArrayList<>();
+
+        for (int i=0 ; i<imgs.size() ; i++) {
+            sources.add(imgs.get(i).attr("data-source").toString());
+        };
+
+        View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+
+    }
+}
+
+
+
