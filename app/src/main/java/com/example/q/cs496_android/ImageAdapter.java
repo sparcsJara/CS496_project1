@@ -62,6 +62,8 @@ public class ImageAdapter extends BaseAdapter {
         return new BitmapDrawable(bitmapResized);
     }
 
+
+
     public void addItem(Drawable img, String name) {
         imgs.add(img);
         names.add(name);

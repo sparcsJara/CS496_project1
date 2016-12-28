@@ -106,7 +106,6 @@ public class OurFragment extends Fragment {
                                          public void onClick(View v) {
                                                 String keyword = edit.getText().toString();
                                                 query[0] = "https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query="+keyword;
-
                                          }
                                      }
 

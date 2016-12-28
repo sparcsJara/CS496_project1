@@ -1,13 +1,23 @@
 package com.example.q.cs496_android;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
 
 
 /**
@@ -21,8 +31,9 @@ import android.widget.GridView;
 public class GalleryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
+    final int REQ_CODE_SELECT_IMAGE = 100;
     private OnFragmentInteractionListener mListener;
+    private ImageAdapter imageAdapter = null;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -54,11 +65,23 @@ public class GalleryFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_gallery, container, false);
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        GridView gridView = (GridView) view.findViewById(R.id.grid1);
-        ImageAdapter imageAdapter = new ImageAdapter();
 
+
+
+
+        //GridView & adapter
+        GridView gridView = (GridView) view.findViewById(R.id.grid1);
+        imageAdapter = new ImageAdapter();
         gridView.setAdapter(imageAdapter);
+
+
         for(int i=0 ; i<10 ; i++) {
+
+
+
+
+
+
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample0), "testing");
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample1), "something");
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample2), "interesting");
@@ -66,9 +89,22 @@ public class GalleryFragment extends Fragment {
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample4), "will");
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample5), "go");
             imageAdapter.addItem(getResources().getDrawable(R.drawable.sample6), "over");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample7), "testing");
+           imageAdapter.addItem(getResources().getDrawable(R.drawable.sample7), "testing");
 
         }
+
+        Button gallery_btn = (Button) view.findViewById(R.id.append);
+        gallery_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
+
+            }
+        });
         return view;
     }
 
@@ -95,6 +131,36 @@ public class GalleryFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+
+        if(requestCode == REQ_CODE_SELECT_IMAGE){
+            if(resultCode== Activity.RESULT_OK){
+                Uri image_uri = data.getData();
+
+                try {
+                    InputStream inputStream = this.getActivity().getContentResolver().openInputStream(image_uri);
+                    Drawable yourChoice = Drawable.createFromStream(inputStream, image_uri.toString() );
+                    imageAdapter.addItem(yourChoice, "testing");
+
+                } catch (FileNotFoundException e) {
+                    Drawable yourChoice = getResources().getDrawable(R.drawable.sample0);
+                    imageAdapter.addItem(yourChoice, "testing");
+
+                }
+
+                imageAdapter.notifyDataSetChanged();
+            }
+
+        }
+    }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this
