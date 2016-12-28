@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -111,6 +112,7 @@ public class OurFragment extends Fragment {
                                                                                             };
                                                                                             //View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
                                                                                             WebView wb = (WebView) view.findViewById(R.id.photo);
+
                                                                                             Random random = new Random();
                                                                                             int url_size = sources.size();
                                                                                             int position = random.nextInt(url_size-1);
