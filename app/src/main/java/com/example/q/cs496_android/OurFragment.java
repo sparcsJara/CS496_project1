@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -109,7 +111,7 @@ public class OurFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_our, container, false);
         final ImageView iv = (ImageView) view.findViewById(R.id.photo);
 
-        final String[] query = {"https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8"};
+        final String[] query = {"https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8", "모모"};
 
         Button input_btn = (Button) view.findViewById(R.id.inputBtn);
         final EditText edit = (EditText) view.findViewById(R.id.input);
@@ -118,6 +120,7 @@ public class OurFragment extends Fragment {
                                          public void onClick(View v) {
                                                 String keyword = edit.getText().toString();
                                                 query[0] = "https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query="+keyword;
+                                                query[1] = keyword;
                                                 Toast.makeText(view.getContext(), keyword + " :)", Toast.LENGTH_SHORT).show();
                                                 loadNewImage(view, query[0]);
                                          }
@@ -152,6 +155,9 @@ public class OurFragment extends Fragment {
                     fos.close();
                     iv.destroyDrawingCache();
                     Toast.makeText(view.getContext(), "Done", Toast.LENGTH_SHORT).show();
+                    getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)));
+
+                    customListener.onClicked(v.getId(), Uri.parse(imageFile.toURI().toString()), query[1]);
 
                     loadNewImage(view, query[0]);
 
@@ -170,6 +176,18 @@ public class OurFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public interface CustomOnClickListener{
+        public void onClicked(int id, Uri uri, String title);
+    }
+
+    private CustomOnClickListener customListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        customListener = (CustomOnClickListener) activity;
     }
 
     public void loadNewImage(final View view, String query) {

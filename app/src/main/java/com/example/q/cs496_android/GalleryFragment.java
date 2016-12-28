@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,6 +41,22 @@ public class GalleryFragment extends Fragment {
 
     public GalleryFragment() {
         // Required empty public constructor
+    }
+
+    public void addToAdapter(Uri image_uri, String title) {
+        try {
+            InputStream inputStream = this.getActivity().getContentResolver().openInputStream(image_uri);
+            Drawable yourChoice = Drawable.createFromStream(inputStream, image_uri.toString() );
+
+            imageAdapter.addItem(yourChoice, title);
+
+        } catch (FileNotFoundException e) {
+            Drawable yourChoice = getResources().getDrawable(R.drawable.sample0);
+            imageAdapter.addItem(yourChoice, "testing");
+
+        }
+
+        imageAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -76,25 +93,6 @@ public class GalleryFragment extends Fragment {
         GridView gridView = (GridView) view.findViewById(R.id.grid1);
         imageAdapter = new ImageAdapter();
         gridView.setAdapter(imageAdapter);
-
-
-        for(int i=0 ; i<10 ; i++) {
-
-
-
-
-
-
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample0), "testing");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample1), "something");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample2), "interesting");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample3), "words");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample4), "will");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample5), "go");
-            imageAdapter.addItem(getResources().getDrawable(R.drawable.sample6), "over");
-           imageAdapter.addItem(getResources().getDrawable(R.drawable.sample7), "testing");
-
-        }
 
         Button gallery_btn = (Button) view.findViewById(R.id.append);
         gallery_btn.setOnClickListener(new View.OnClickListener(){
