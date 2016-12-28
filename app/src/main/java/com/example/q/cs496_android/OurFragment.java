@@ -118,51 +118,21 @@ public class OurFragment extends Fragment {
                                          public void onClick(View v) {
                                                 String keyword = edit.getText().toString();
                                                 query[0] = "https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query="+keyword;
-
+                                                Toast.makeText(view.getContext(), keyword + " :)", Toast.LENGTH_SHORT).show();
+                                                loadNewImage(view, query[0]);
                                          }
                                      }
 
 
         );
-        Ion.with(getContext()).load(query[0]).asString().setCallback(new FutureCallback<String>() {
-            @Override
-            public void onCompleted(Exception e, String html) {
-                Document doc = Jsoup.parse(html);
-                Elements imgs = doc.select("img._img");
-                final List<String> sources = new ArrayList<>();
-                String testing;
-                for (int i=0 ; i<imgs.size() ; i++) {
-                    testing = imgs.get(i).attr("data-source").toString();
-                    sources.add(testing);
-                };
-                Random random = new Random();
-                int url_size = sources.size();
-                final int position = random.nextInt(url_size-1);
 
-                Picasso.with(view.getContext()).load(sources.get(position)).into(iv);
-           }});
+        loadNewImage(view, query[0]);
 
         Button reloadBtn = (Button) view.findViewById(R.id.reloadBtn);
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Ion.with(getContext()).load(query[0]).asString().setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String html) {
-                        Document doc = Jsoup.parse(html);
-                        Elements imgs = doc.select("img._img");
-                        final List<String> sources = new ArrayList<>();
-                        String testing;
-                        for (int i=0 ; i<imgs.size() ; i++) {
-                            testing = imgs.get(i).attr("data-source").toString();
-                            sources.add(testing);
-                        };
-                        Random random = new Random();
-                        int url_size = sources.size();
-                        final int position = random.nextInt(url_size-1);
-
-                        Picasso.with(view.getContext()).load(sources.get(position)).into(iv);
-                    }});
+                loadNewImage(view, query[0]);
             }
         });
 
@@ -183,23 +153,7 @@ public class OurFragment extends Fragment {
                     iv.destroyDrawingCache();
                     Toast.makeText(view.getContext(), "Done", Toast.LENGTH_SHORT).show();
 
-                    Ion.with(getContext()).load(query).asString().setCallback(new FutureCallback<String>() {
-                        @Override
-                        public void onCompleted(Exception e, String html) {
-                            Document doc = Jsoup.parse(html);
-                            Elements imgs = doc.select("img._img");
-                            final List<String> sources = new ArrayList<>();
-                            String testing;
-                            for (int i=0 ; i<imgs.size() ; i++) {
-                                testing = imgs.get(i).attr("data-source").toString();
-                                sources.add(testing);
-                            };
-                            Random random = new Random();
-                            int url_size = sources.size();
-                            final int position = random.nextInt(url_size-1);
-
-                            Picasso.with(view.getContext()).load(sources.get(position)).into(iv);
-                        }});
+                    loadNewImage(view, query[0]);
 
                     return;
                 } catch(IOException e) {
@@ -216,6 +170,27 @@ public class OurFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void loadNewImage(final View view, String query) {
+        Ion.with(getContext()).load(query).asString().setCallback(new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String html) {
+                final ImageView iv = (ImageView) view.findViewById(R.id.photo);
+                Document doc = Jsoup.parse(html);
+                Elements imgs = doc.select("img._img");
+                final List<String> sources = new ArrayList<>();
+                String testing;
+                for (int i=0 ; i<imgs.size() ; i++) {
+                    testing = imgs.get(i).attr("data-source").toString();
+                    sources.add(testing);
+                };
+                Random random = new Random();
+                int url_size = sources.size();
+                int position = random.nextInt(url_size-1);
+
+                Picasso.with(view.getContext()).load(sources.get(position)).into(iv);
+            }});
     }
 
     // TODO: Rename method, update argument and hook method into UI event
