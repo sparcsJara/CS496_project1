@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,9 +123,38 @@ public class OurFragment extends Fragment {
 
         );
 
+        Button button = (Button) view.findViewById(R.id.reloadBtn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Ion.with(getContext()).load("https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EC%84%A4%ED%98%84").asString().setCallback(new FutureCallback<String>() {
+                                                                                                                                                                        @Override
+                                                                                                                                                                        public void onCompleted(Exception e, String html) {
 
+                                                                                                                                                                            Document doc = Jsoup.parse(html);
+                                                                                                                                                                            Elements imgs = doc.select("img._img");
+                                                                                                                                                                            List<String> sources = new ArrayList<>();
+                                                                                                                                                                            String testing;
+                                                                                                                                                                            for (int i=0 ; i<imgs.size() ; i++) {
+                                                                                                                                                                                testing = imgs.get(i).attr("data-source").toString();
 
+                                                                                                                                                                                sources.add(testing);
+                                                                                                                                                                            };
+                                                                                                                                                                            //View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+                                                                                                                                                                            WebView wb = (WebView) view.findViewById(R.id.photo);
+                                                                                                                                                                            Random random = new Random();
+                                                                                                                                                                            int url_size = sources.size();
+                                                                                                                                                                            int position = random.nextInt(url_size-1);
+                                                                                                                                                                            wb.loadUrl(sources.get(position));
 
+                                                                                                                                                                        }
+
+                                                                                                                                                                    }
+
+                );
+
+            }
+        });
 
 
         return view;

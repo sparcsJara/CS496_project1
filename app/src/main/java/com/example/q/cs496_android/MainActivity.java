@@ -20,7 +20,7 @@ implements ContactsFragment.OnFragmentInteractionListener,
 
         tabAdapter.addFragment(new ContactsFragment(), "Contacts");
         tabAdapter.addFragment(new GalleryFragment(), "Gallery");
-        tabAdapter.addFragment(new OurFragment(), "CHANGE THIS");
+        tabAdapter.addFragment(new OurFragment(), "MOMO Finder");
         viewPager.setAdapter(tabAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
