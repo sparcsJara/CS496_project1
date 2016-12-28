@@ -15,9 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 
 
 /**
@@ -145,7 +148,8 @@ public class GalleryFragment extends Fragment {
                 try {
                     InputStream inputStream = this.getActivity().getContentResolver().openInputStream(image_uri);
                     Drawable yourChoice = Drawable.createFromStream(inputStream, image_uri.toString() );
-                    imageAdapter.addItem(yourChoice, "testing");
+
+                    imageAdapter.addItem(yourChoice, "gallery");
 
                 } catch (FileNotFoundException e) {
                     Drawable yourChoice = getResources().getDrawable(R.drawable.sample0);

@@ -30,4 +30,5 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.1'
     testCompile 'junit:junit:4.12'
     compile 'com.koushikdutta.ion:ion:2.1.9'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
