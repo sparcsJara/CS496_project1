@@ -15,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -107,9 +109,22 @@ public class OurFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_our, container, false);
         final ImageView iv = (ImageView) view.findViewById(R.id.photo);
 
-        final String query = "https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8";
+        final String[] query = {"https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8"};
 
-        Ion.with(getContext()).load(query).asString().setCallback(new FutureCallback<String>() {
+        Button input_btn = (Button) view.findViewById(R.id.inputBtn);
+        final EditText edit = (EditText) view.findViewById(R.id.input);
+        input_btn.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                                String keyword = edit.getText().toString();
+                                                query[0] = "https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query="+keyword;
+
+                                         }
+                                     }
+
+
+        );
+        Ion.with(getContext()).load(query[0]).asString().setCallback(new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String html) {
                 Document doc = Jsoup.parse(html);
@@ -131,7 +146,7 @@ public class OurFragment extends Fragment {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Ion.with(getContext()).load(query).asString().setCallback(new FutureCallback<String>() {
+                Ion.with(getContext()).load(query[0]).asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String html) {
                         Document doc = Jsoup.parse(html);
