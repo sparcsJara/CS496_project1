@@ -2,6 +2,7 @@ package com.example.q.cs496_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +33,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -43,6 +49,7 @@ public class OurFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    static List<String> sources = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -84,29 +91,41 @@ public class OurFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        // Dialog
 
-//        return inflater.inflate(R.layout.fragment_our, container, false);
-        View view = inflater.inflate(R.layout.fragment_our, container, false);
+        final View view = inflater.inflate(R.layout.fragment_our, container, false);
 
-        final WebView webView = new WebView(view.getContext());
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new MyJavascriptInterface(view.getContext()), "HtmlViewer");
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                webView.loadUrl("javascript:HtmlViewer.showHTML" +
-                        "('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-            }
-        });
+        String temp2;
 
-        String newUA = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
-        webView.getSettings().setUserAgentString(newUA);
+        Ion.with(getContext()).load("https://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EC%84%A4%ED%98%84").asString().setCallback(new FutureCallback<String>() {
+                                                                                       @Override
+                                                                                       public void onCompleted(Exception e, String html) {
 
-        // Executed at startup & clicked
-        webView.loadUrl("https://search.naver.com/search.naver?sm=tab_hty.top&where=image&oquery=%EB%AA%A8%EB%AA%A8&ie=utf8&query=%EB%AA%A8%EB%AA%A8");
-        //webView.loadUrl(generate_query(i));
+                                                                                           Document doc = Jsoup.parse(html);
+                                                                                           Elements imgs = doc.select("img._img");
+                                                                                           List<String> sources = new ArrayList<>();
+                                                                                           String testing;
+                                                                                           for (int i=0 ; i<imgs.size() ; i++) {
+                                                                                                testing = imgs.get(i).attr("data-source").toString();
+
+                                                                                                sources.add(testing);
+                                                                                            };
+                                                                                            //View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+                                                                                            WebView wb = (WebView) view.findViewById(R.id.photo);
+                                                                                            Random random = new Random();
+                                                                                            int url_size = sources.size();
+                                                                                            int position = random.nextInt(url_size-1);
+                                                                                            wb.loadUrl(sources.get(position));
+
+                                                                                       }
+
+                                                                                   }
+
+        );
+
+
+
+
+
 
         return view;
     }
@@ -157,27 +176,7 @@ public class OurFragment extends Fragment {
     }
 }
 
-class MyJavascriptInterface {
-    private Context ctx;
-    MyJavascriptInterface(Context ctx) {
-        this.ctx = ctx;
-    }
-    @JavascriptInterface
-    public void showHTML(String html) {
-        Log.d("Here is", Integer.toString(html.length()));
-        Document doc = Jsoup.parse(html);
-        Elements imgs = doc.select("img._img");
 
-        List<String> sources = new ArrayList<>();
-
-        for (int i=0 ; i<imgs.size() ; i++) {
-            sources.add(imgs.get(i).attr("data-source").toString());
-        };
-
-        View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
-
-    }
-}
 
 
 

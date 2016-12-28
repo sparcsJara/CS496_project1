@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.example.q.cs496_android.OurFragment">
 
-    <ImageView
+    <WebView
+        android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/activity_horizontal_margin"
-        android:onClick="refreshPicture"
+
         />
 
 </LinearLayout>
