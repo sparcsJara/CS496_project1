@@ -1,5 +1,6 @@
 package com.example.q.cs496_android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -78,27 +89,24 @@ public class OurFragment extends Fragment {
 
 //        return inflater.inflate(R.layout.fragment_our, container, false);
         View view = inflater.inflate(R.layout.fragment_our, container, false);
-        new Thread() {
-            public void run() {
-                try {
-                    URL url = new URL("http://search.naver.com/search.naver?where=image&sm=tab_jum&ie=utf8&query=%EB%AA%A8%EB%AA%A8");
 
-                    URLConnection cnx = url.openConnection();
-                    cnx.setRequestProperty("User-Agent", "Mozilla");
-                    InputStream is = cnx.getInputStream();
-
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-                    String line = null;
-
-                    while((line = br.readLine()) != null) {
-                        Log.d("hi", line);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        final WebView webView = new WebView(view.getContext());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new MyJavascriptInterface(view.getContext()), "HtmlViewer");
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                webView.loadUrl("javascript:HtmlViewer.showHTML" +
+                        "('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
             }
-        }.start();
+        });
+
+        String newUA = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
+        webView.getSettings().setUserAgentString(newUA);
+
+        // Executed at startup & clicked
+        webView.loadUrl("https://search.naver.com/search.naver?sm=tab_hty.top&where=image&oquery=%EB%AA%A8%EB%AA%A8&ie=utf8&query=%EB%AA%A8%EB%AA%A8");
+        //webView.loadUrl(generate_query(i));
 
         return view;
     }
@@ -148,3 +156,28 @@ public class OurFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
+class MyJavascriptInterface {
+    private Context ctx;
+    MyJavascriptInterface(Context ctx) {
+        this.ctx = ctx;
+    }
+    @JavascriptInterface
+    public void showHTML(String html) {
+        Log.d("Here is", Integer.toString(html.length()));
+        Document doc = Jsoup.parse(html);
+        Elements imgs = doc.select("img._img");
+
+        List<String> sources = new ArrayList<>();
+
+        for (int i=0 ; i<imgs.size() ; i++) {
+            sources.add(imgs.get(i).attr("data-source").toString());
+        };
+
+        View view = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+
+    }
+}
+
+
+
